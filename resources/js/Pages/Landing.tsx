@@ -1,29 +1,22 @@
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import { useState } from "react";
+// import { useState } from "react";
 import Navbar from "@/Components/Navbar";
 import HeroSection from "@/Components/HeroSection";
 import ProductCard from "@/Components/ProductCard";
 
-export default function Landing({ auth }: PageProps) {
-    const [featuredProducts] = useState([
-        {
-            id: 1,
-            name: "Smartphone XYZ",
-            price: 3500000,
-            image: "/images/product1.jpg",
-            category: "Elektronik",
-        },
-        {
-            id: 2,
-            name: "Laptop ABC",
-            price: 12000000,
-            image: "/images/product2.jpg",
-            category: "Elektronik",
-        },
-        // Tambahkan lebih banyak produk
-    ]);
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    category: string;
+}
+interface LandingProps extends PageProps {
+    FeaturedProducts: Product[];
+}
 
+export default function Landing({ auth, FeaturedProducts }: LandingProps) {
     return (
         <>
             <Head title="Stocku - Platform E-Commerce Terpercaya" />
@@ -39,7 +32,7 @@ export default function Landing({ auth }: PageProps) {
                     </h2>
                     <div className="relative">
                         <div className="flex overflow-x-auto pb-6 scrollbar-hide">
-                            {featuredProducts.map((product) => (
+                            {FeaturedProducts.map((product) => (
                                 <ProductCard key={product.id} {...product} />
                             ))}
                         </div>

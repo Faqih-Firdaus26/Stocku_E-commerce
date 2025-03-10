@@ -13,14 +13,22 @@ export default function ProductCard({
     image,
     category,
 }: ProductProps) {
+    const imageUrl =
+        image.startsWith("http") || image.startsWith("/images")
+            ? image
+            : `/storage/${image}`;
+
     return (
         <div className="flex-none w-64 mr-4">
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="h-48 w-full bg-gray-200 relative overflow-hidden">
                     <img
-                        src={image}
+                        src={imageUrl}
                         alt={name}
                         className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                        onError={(e) => {
+                            e.currentTarget.src = "/images/default-product.png";
+                        }}
                     />
                 </div>
                 <div className="p-4">
