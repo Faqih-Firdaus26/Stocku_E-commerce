@@ -5,18 +5,23 @@ import Navbar from "@/Components/Navbar";
 import HeroSection from "@/Components/HeroSection";
 import ProductCard from "@/Components/ProductCard";
 import Footer from "@/Components/Footer";
+
 interface Product {
     id: number;
     name: string;
     price: number;
     image: string;
-    category: string;
-}
-interface LandingProps extends PageProps {
-    FeaturedProducts: Product[];
+    category: {
+        id: number;
+        name: string;
+    };
 }
 
-export default function Landing({ auth, FeaturedProducts }: LandingProps) {
+interface LandingProps extends PageProps {
+    featuredProducts: Product[];
+}
+
+export default function Landing({ auth, featuredProducts }: LandingProps) {
     return (
         <>
             <Head title="Stocku - Platform E-Commerce Terpercaya" />
@@ -32,7 +37,7 @@ export default function Landing({ auth, FeaturedProducts }: LandingProps) {
                     </h2>
                     <div className="relative">
                         <div className="flex overflow-x-auto pb-6 scrollbar-hide">
-                            {FeaturedProducts.map((product) => (
+                            {featuredProducts.map((product) => (
                                 <ProductCard key={product.id} {...product} />
                             ))}
                         </div>

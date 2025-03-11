@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +12,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::latest()->paginate(10);
+        $products = Product::with('category')->latest()->paginate(10);
         return Inertia::render('Products/Index', [
             'products' => $products
         ]);
@@ -19,63 +20,69 @@ class ProductController extends Controller
 
     public function create()
     {
-        return Inertia::render('Products/Create');
+        $categories = Category::all();
+        return Inertia::render('Products/Create', [
+            'categories' => $categories
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'category' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $data = $request->all();
-        
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-            $data['image'] = $imagePath;
+            $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        Product::create($data);
+        Product::create($validated);
 
         return redirect()->route('products.index')
             ->with('message', 'Produk berhasil ditambahkan');
     }
 
+    public function show(Product $product)
+    {
+        return Inertia::render('Products/Show', [
+            'product' => $product->load(['category', 'reviews.user'])
+        ]);
+    }
+
     public function edit(Product $product)
     {
+        $categories = Category::all();
         return Inertia::render('Products/Edit', [
-            'product' => $product
+            'product' => $product,
+            'categories' => $categories
         ]);
     }
 
     public function update(Request $request, Product $product)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'category' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $data = $request->all();
-
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
+            // Hapus gambar lama
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $imagePath = $request->file('image')->store('products', 'public');
-            $data['image'] = $imagePath;
+            $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $product->update($data);
+        $product->update($validated);
 
         return redirect()->route('products.index')
             ->with('message', 'Produk berhasil diperbarui');
@@ -95,9 +102,12 @@ class ProductController extends Controller
 
     public function landing()
     {
-        $FeaturedProducts = Product::latest()->paginate(10);
+        $featuredProducts = Product::with('category')->latest()->take(8)->get();
+        $categories = Category::withCount('products')->get();
+        
         return Inertia::render('Landing', [
-            'FeaturedProducts' => $FeaturedProducts
+            'featuredProducts' => $featuredProducts,
+            'categories' => $categories
         ]);
     }
 }
