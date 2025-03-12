@@ -74,14 +74,14 @@ export default function Index({ auth, products }: Props) {
                                         {products.data.map((product) => (
                                             <tr key={product.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <img
-                                                        src={`/storage/${product.image}`}
+                                                            <img
+                                                                src={`/storage/${product.image}`}
                                                         alt={product.name}
                                                         className="h-12 w-12 object-cover rounded"
-                                                    />
+                                                            />
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                    {product.name}
+                                                                {product.name}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                                                     {product.category.name}
@@ -97,25 +97,25 @@ export default function Index({ auth, products }: Props) {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <div className="flex space-x-3">
-                                                        <Link
-                                                            href={route(
-                                                                "products.edit",
-                                                                product.id
-                                                            )}
+                                                    <Link
+                                                        href={route(
+                                                            "products.edit",
+                                                            product.id
+                                                        )}
                                                             className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                        <button
+                                                    >
+                                                        Edit
+                                                    </Link>
+                                                    <button
                                                             onClick={() =>
                                                                 handleDelete(
                                                                     product.id
                                                                 )
                                                             }
                                                             className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                                        >
-                                                            Hapus
-                                                        </button>
+                                                    >
+                                                        Hapus
+                                                    </button>
                                                     </div>
                                                 </td>
                                             </tr>
